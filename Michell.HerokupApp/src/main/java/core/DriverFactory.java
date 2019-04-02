@@ -12,23 +12,14 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class DriverFactory {
 	
-	private static ThreadLocal<WebDriver> threadDriver = new ThreadLocal<WebDriver>(){
-		@Override
-		protected synchronized WebDriver initialValue(){
-			return initDriver();
-		}
-	};
+	private static WebDriver driver;
 	
 	private DriverFactory() {}
 	
-	public static WebDriver getDriver(){
-		return threadDriver.get();
-	}
 	
-	
-	public static WebDriver initDriver(){		
+	public static WebDriver getDriver(){		
 		
-		WebDriver driver = null;		
+			if(driver == null) {
 			switch (Propriedades.BROWSER) {
 				case FIREFOX:
 					System.setProperty("webdriver.gecko.driver", System.getProperty("user.dir") + "//drivers//geckodriver.exe");
@@ -49,19 +40,17 @@ public class DriverFactory {
 			}
 	
 		driver.manage().window().setSize(new Dimension(1200, 765));
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		return driver;
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);		
 	}
-
+			return driver;
+	}
 	public static void killDriver(){
-		WebDriver driver = getDriver();
+		
 		if(driver != null) {
 			driver.quit();
 			driver = null;
 		}
-		if(threadDriver != null) {
-			threadDriver.remove();
-		}
+		
 	}
 
 }
